@@ -49,8 +49,8 @@ export function Advisor() {
             </span>
           </div>
           <div className="pt-1">
-            <Button asChild size="lg">
-              <a href="#consultation">Schedule a confidential call</a>
+            <Button render={<a href="#consultation" />} nativeButton={false} size="lg">
+              Schedule a confidential call
             </Button>
           </div>
         </div>

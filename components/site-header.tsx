@@ -35,8 +35,8 @@ export function SiteHeader() {
             <Phone className="size-4 text-primary" aria-hidden="true" />
             469-509-3031
           </a>
-          <Button asChild size="sm">
-            <a href="#consultation">Get help now</a>
+          <Button render={<a href="#consultation" />} nativeButton={false} size="sm">
+            Get help now
           </Button>
         </div>
       </div>

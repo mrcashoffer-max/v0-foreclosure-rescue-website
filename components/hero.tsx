@@ -20,11 +20,17 @@ export function Hero() {
             families for two decades.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button render={<a href="#consultation" />} size="lg" className="text-base">
+            <Button
+              render={<a href="#consultation" />}
+              nativeButton={false}
+              size="lg"
+              className="text-base"
+            >
               Talk to a specialist
             </Button>
             <Button
               render={<a href="#options" />}
+              nativeButton={false}
               size="lg"
               variant="outline"
               className="text-base"
