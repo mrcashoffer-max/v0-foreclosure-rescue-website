@@ -65,6 +65,7 @@ export async function submitWizardLead(input: {
   phone: string
   email: string
   address?: string
+  source?: string
   quizData: Record<string, string>
   recommendations: string[]
 }): Promise<WizardResult> {
@@ -72,6 +73,7 @@ export async function submitWizardLead(input: {
   const phone = input.phone.trim()
   const email = input.email.trim()
   const address = (input.address ?? "").trim()
+  const source = (input.source ?? "options-wizard").trim() || "options-wizard"
 
   if (!name || !phone || !email) {
     return { ok: false, message: "Please fill in your name, phone, and email." }
@@ -84,12 +86,13 @@ export async function submitWizardLead(input: {
     const pool = getPool()
     await pool.query(
       `INSERT INTO leads (name, phone, email, address, source, lead_type, quiz_data, recommendations)
-       VALUES ($1, $2, $3, $4, 'options-wizard', 'wizard', $5, $6)`,
+       VALUES ($1, $2, $3, $4, $5, 'wizard', $6, $7)`,
       [
         name,
         phone,
         email,
         address || null,
+        source,
         JSON.stringify(input.quizData),
         input.recommendations,
       ],

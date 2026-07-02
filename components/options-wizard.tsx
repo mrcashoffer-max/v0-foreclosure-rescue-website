@@ -23,7 +23,7 @@ import { toast } from "sonner"
 
 type Phase = "intro" | "questions" | "capture" | "results"
 
-export function OptionsWizard() {
+export function OptionsWizard({ source = "options-wizard" }: { source?: string }) {
   const [phase, setPhase] = useState<Phase>("intro")
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
@@ -76,6 +76,7 @@ export function OptionsWizard() {
     startTransition(async () => {
       const res = await submitWizardLead({
         ...contact,
+        source,
         quizData: answers,
         recommendations: recommendations.map((r) => r.slug),
       })

@@ -1,20 +1,22 @@
 import { Hero } from "@/components/hero"
-import { Timeline } from "@/components/timeline"
-import { Options } from "@/components/options"
+import { Reassurance } from "@/components/reassurance"
+import { HowItWorks } from "@/components/how-it-works"
+import { OptionsPreview } from "@/components/options-preview"
+import { GuidesPreview } from "@/components/guides-preview"
 import { FreeHelp } from "@/components/free-help"
 import { Advisor } from "@/components/advisor"
-import { Faq } from "@/components/faq"
 import { FinalCta } from "@/components/final-cta"
 
 export default function Page() {
   return (
     <>
       <Hero />
-      <Timeline />
-      <Options />
+      <Reassurance />
+      <HowItWorks />
+      <OptionsPreview />
+      <GuidesPreview />
       <FreeHelp />
       <Advisor />
-      <Faq />
       <FinalCta />
     </>
   )

@@ -8,7 +8,7 @@ import { site } from "@/lib/site"
 import { CheckCircle2, Phone, ChevronRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Your Foreclosure Options in Texas | Find What Fits",
+  title: "Your Foreclosure Options in Texas",
   description:
     "Explore every option for a Texas homeowner in pre-foreclosure — from loan modifications and reinstatement to cash sales and short sales. Take our 2-minute finder to see what fits your situation.",
 }

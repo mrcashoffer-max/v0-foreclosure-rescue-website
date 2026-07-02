@@ -1,5 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import { TrackingPixels } from '@/components/tracking-pixels'
@@ -13,8 +13,16 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+export const viewport: Viewport = {
+  themeColor: '#0f766e',
+}
+
 export const metadata: Metadata = {
-  title: 'Texas Foreclosure Relief | Know Your Options & Keep Your Home',
+  metadataBase: new URL('https://txforeclosurerelief.com'),
+  title: {
+    default: 'Texas Foreclosure Relief | Know Your Options & Keep Your Home',
+    template: '%s | Texas Foreclosure Relief',
+  },
   description:
     'Behind on your mortgage in Texas? Explore every option to keep or sell your home and get a free, confidential consultation with a foreclosure specialist with 20+ years of experience.',
   keywords: [
