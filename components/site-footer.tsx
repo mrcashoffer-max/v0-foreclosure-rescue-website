@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { ShieldCheck } from "lucide-react"
-import { site } from "@/lib/site"
-import { guides } from "@/lib/guides"
+import { site, footerNav } from "@/lib/site"
 import { counties } from "@/lib/counties"
 
 export function SiteFooter() {
@@ -24,32 +23,26 @@ export function SiteFooter() {
 
           <div className="flex flex-col gap-2 text-sm">
             <span className="font-medium text-foreground">Explore</span>
-            <Link href="/options" className="text-muted-foreground hover:text-foreground">
-              Your options
-            </Link>
-            <Link href="/guides" className="text-muted-foreground hover:text-foreground">
-              Guides
-            </Link>
-            <Link href="/counties" className="text-muted-foreground hover:text-foreground">
-              Counties we serve
-            </Link>
-            <Link href="/about" className="text-muted-foreground hover:text-foreground">
-              About {site.specialist}
-            </Link>
-            <Link href="/faq" className="text-muted-foreground hover:text-foreground">
-              FAQ
-            </Link>
+            {footerNav.explore.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
 
           <div className="flex flex-col gap-2 text-sm">
-            <span className="font-medium text-foreground">Popular guides</span>
-            {guides.slice(0, 4).map((g) => (
+            <span className="font-medium text-foreground">Learn &amp; help</span>
+            {footerNav.resources.map((item) => (
               <Link
-                key={g.slug}
-                href={`/guides/${g.slug}`}
+                key={item.href}
+                href={item.href}
                 className="text-muted-foreground hover:text-foreground"
               >
-                {g.title.length > 34 ? `${g.title.slice(0, 34)}…` : g.title}
+                {item.label}
               </Link>
             ))}
           </div>

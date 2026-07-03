@@ -8,10 +8,27 @@ export const site = {
 }
 
 export const mainNav = [
-  { label: "How It Works", href: "/#how-it-works" },
   { label: "Your Options", href: "/options" },
   { label: "Guides", href: "/guides" },
+  { label: "Success Stories", href: "/success-stories" },
+  { label: "Resources", href: "/resources" },
   { label: "Counties", href: "/counties" },
   { label: "About", href: "/about" },
-  { label: "FAQ", href: "/faq" },
 ]
+
+export const footerNav = {
+  explore: [
+    { label: "Your options", href: "/options" },
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Success stories", href: "/success-stories" },
+    { label: "Counties we serve", href: "/counties" },
+    { label: `About ${site.specialist}`, href: "/about" },
+  ],
+  resources: [
+    { label: "Guides", href: "/guides" },
+    { label: "Free checklists", href: "/resources" },
+    { label: "Glossary", href: "/glossary" },
+    { label: "Who can help", href: "/professionals" },
+    { label: "FAQ", href: "/faq" },
+  ],
+}

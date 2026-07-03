@@ -243,6 +243,51 @@ export const guides: Guide[] = [
     relatedGuides: ["your-rights-in-pre-foreclosure", "how-to-stop-the-sale"],
     relatedOptions: ["loan-modification", "cash-sale"],
   },
+  {
+    slug: "understanding-subject-to",
+    title: "Understanding 'Subject-To': Letting a Buyer Take Over Your Mortgage",
+    excerpt:
+      "A subject-to arrangement can stop the bleeding quickly when you have little equity — but it stays in your name, so it's essential to understand the trade-offs first.",
+    category: "Your Options",
+    readingTime: "6 min read",
+    sections: [
+      {
+        heading: "What 'subject-to' actually means",
+        body: [
+          "In a subject-to transaction, a buyer takes over responsibility for your existing mortgage payments while the loan itself stays in your name. You transfer the property, and the buyer agrees to keep making the payments on the loan you originally signed for.",
+          "It's a way to hand off a home you can no longer afford — often quickly and without the costs of a traditional sale — while stopping the missed payments that are driving the foreclosure.",
+        ],
+      },
+      {
+        heading: "When it can make sense",
+        body: [
+          "Subject-to is most useful when you have little or no equity, need to move on fast, and simply want the payments made and the default stopped. Because there's no new loan to originate, it can close much faster than a conventional sale.",
+        ],
+        list: [
+          "You're behind and a sale date is approaching",
+          "You have little equity, so a traditional sale wouldn't net much",
+          "You need to relocate and can't keep up the payments",
+          "You want to avoid a completed foreclosure on your record",
+        ],
+      },
+      {
+        heading: "The risks you must understand",
+        body: [
+          "Because the loan stays in your name, your credit is still tied to it. If the buyer stops paying, the default falls back on you. There is also a 'due-on-sale' clause in most mortgages that technically lets the lender call the loan if the property transfers.",
+          "This is not a reason to rule it out — many families use subject-to successfully — but it is a reason to insist on a written agreement, a trustworthy buyer, and a review by a real estate attorney before you sign anything.",
+        ],
+      },
+      {
+        heading: "How to protect yourself",
+        body: [
+          "Never enter a subject-to arrangement on a handshake. Have a real estate attorney review the contract, confirm how and where payments will be made, and ask for proof that payments are current on an ongoing basis.",
+          "If someone pressures you to sign quickly, won't put terms in writing, or asks for money upfront, treat it as a warning sign and walk away.",
+        ],
+      },
+    ],
+    relatedGuides: ["selling-during-foreclosure", "avoiding-foreclosure-scams"],
+    relatedOptions: ["subject-to", "cash-sale", "short-sale"],
+  },
 ]
 
 export function getGuide(slug: string) {

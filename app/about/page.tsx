@@ -107,6 +107,54 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <section className="border-t border-border bg-secondary/40">
+        <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-balance text-3xl font-semibold tracking-tight">
+              How a conversation with Chris works
+            </h2>
+            <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
+              No scripts, no pressure. Just a clear, human conversation about where you are and where
+              you want to go.
+            </p>
+          </div>
+          <ol className="mt-10 flex flex-col gap-5">
+            {[
+              {
+                step: "1",
+                title: "We listen to your situation",
+                body: "You share what's happening in your own words. Chris asks questions to understand your goals, your timeline, and what matters most to your family.",
+              },
+              {
+                step: "2",
+                title: "We explain every option honestly",
+                body: "You'll hear the full picture — the ways to keep your home, the ways to protect your equity, and the trade-offs of each — in plain English.",
+              },
+              {
+                step: "3",
+                title: "You decide, at your pace",
+                body: "There's no obligation. If the best move is a free HUD counselor or a call to your servicer, Chris will tell you. The decision is always yours.",
+              },
+            ].map((item) => (
+              <li
+                key={item.step}
+                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                  {item.step}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-semibold text-card-foreground">{item.title}</h3>
+                  <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
+                    {item.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
       <CtaBanner
         title="Ready to talk it through?"
         description="Reach out for a free, confidential conversation. No obligation — just a clear picture of your options."
