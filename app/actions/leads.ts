@@ -19,6 +19,9 @@ export async function submitLead(
   const phone = String(formData.get("phone") ?? "").trim()
   const email = String(formData.get("email") ?? "").trim()
   const address = String(formData.get("address") ?? "").trim()
+  const county = String(formData.get("county") ?? "").trim()
+  const auctionDate = String(formData.get("auctionDate") ?? "").trim()
+  const goal = String(formData.get("goal") ?? "").trim()
   const situation = String(formData.get("situation") ?? "").trim()
   const source = String(formData.get("source") ?? "website").trim()
 
@@ -33,9 +36,19 @@ export async function submitLead(
   try {
     const pool = getPool()
     await pool.query(
-      `INSERT INTO leads (name, phone, email, address, situation, source, lead_type)
-       VALUES ($1, $2, $3, $4, $5, $6, 'consultation')`,
-      [name, phone, email, address, situation || null, source || null],
+      `INSERT INTO leads (name, phone, email, address, county, auction_date, goal, situation, source, lead_type)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'consultation')`,
+      [
+        name,
+        phone,
+        email,
+        address,
+        county || null,
+        auctionDate || null,
+        goal || null,
+        situation || null,
+        source || null,
+      ],
     )
     return {
       ok: true,
@@ -65,6 +78,9 @@ export async function submitWizardLead(input: {
   phone: string
   email: string
   address?: string
+  county?: string
+  auctionDate?: string
+  goal?: string
   source?: string
   quizData: Record<string, string>
   recommendations: string[]
@@ -73,6 +89,9 @@ export async function submitWizardLead(input: {
   const phone = input.phone.trim()
   const email = input.email.trim()
   const address = (input.address ?? "").trim()
+  const county = (input.county ?? "").trim()
+  const auctionDate = (input.auctionDate ?? "").trim()
+  const goal = (input.goal ?? "").trim()
   const source = (input.source ?? "options-wizard").trim() || "options-wizard"
 
   if (!name || !phone || !email) {
@@ -85,13 +104,16 @@ export async function submitWizardLead(input: {
   try {
     const pool = getPool()
     await pool.query(
-      `INSERT INTO leads (name, phone, email, address, source, lead_type, quiz_data, recommendations)
-       VALUES ($1, $2, $3, $4, $5, 'wizard', $6, $7)`,
+      `INSERT INTO leads (name, phone, email, address, county, auction_date, goal, source, lead_type, quiz_data, recommendations)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'wizard', $9, $10)`,
       [
         name,
         phone,
         email,
         address || null,
+        county || null,
+        auctionDate || null,
+        goal || null,
         source,
         JSON.stringify(input.quizData),
         input.recommendations,

@@ -91,12 +91,14 @@ export function recommendOptions(answers: Record<string, string>): ForeclosureOp
     add("traditional-sale", 2)
     add("short-sale", 2)
     add("sale-leaseback", 2)
+    add("subject-to", 2)
   }
   if (goal === "unsure") {
     add("loan-modification", 1)
     add("cash-sale", 1)
     add("reinstatement", 1)
     add("sale-leaseback", 1)
+    add("subject-to", 1)
   }
 
   // Stage weighting
@@ -114,6 +116,7 @@ export function recommendOptions(answers: Record<string, string>): ForeclosureOp
     add("reinstatement", 2)
     add("cash-sale", 3)
     add("chapter-13", 3)
+    add("subject-to", 1)
   }
 
   // Hardship weighting
@@ -142,10 +145,12 @@ export function recommendOptions(answers: Record<string, string>): ForeclosureOp
   if (equity === "little") {
     add("loan-modification", 1)
     add("reinstatement", 1)
+    add("subject-to", 3)
   }
   if (equity === "underwater") {
     add("short-sale", 4)
     add("loan-modification", 1)
+    add("subject-to", 2)
   }
 
   // Loan type weighting

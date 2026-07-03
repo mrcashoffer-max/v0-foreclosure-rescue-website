@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { site } from "@/lib/site"
+import { options } from "@/lib/options"
 import { ShieldCheck, Phone, Sparkles, ArrowRight } from "lucide-react"
 
 export function Hero() {
@@ -11,20 +12,21 @@ export function Hero() {
         <div className="flex flex-col gap-6">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
             <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
-            Trusted by Texas homeowners for 20+ years
+            The Texas homeowner decision platform
           </span>
           <h1 className="text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Behind on your mortgage? You still have options.
+            Understand every option. Make the right decision.
           </h1>
           <p className="max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
-            Pre-foreclosure feels overwhelming, but it&apos;s rarely the end of the road. In two
-            minutes, discover the paths that fit your situation — then talk to a specialist who has
-            guided Texas families for two decades.
+            Foreclosure is one of the biggest financial decisions a family can face — and you
+            deserve to understand every path before you choose. Keeping your home is often the right
+            answer. In two minutes, see the options that fit your situation, then talk with a
+            specialist who has guided Texas families for two decades.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button render={<Link href="/options" />} nativeButton={false} size="lg" className="text-base">
               <Sparkles className="size-4" aria-hidden="true" />
-              Find my options
+              Explore my options
             </Button>
             <Button
               render={<a href={site.phoneHref} />}
@@ -40,7 +42,7 @@ export function Hero() {
           <dl className="grid max-w-md grid-cols-3 gap-4 pt-4">
             {[
               { value: "20+", label: "Years helping Texans" },
-              { value: "11", label: "Ways to stop foreclosure" },
+              { value: `${options.length}`, label: "Options explained clearly" },
               { value: "100%", label: "Free & confidential" },
             ].map((stat) => (
               <div key={stat.label} className="flex flex-col gap-1">

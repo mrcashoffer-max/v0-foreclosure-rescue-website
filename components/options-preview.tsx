@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { categoryMeta, optionsByCategory, type OptionCategory } from "@/lib/options"
+import { categoryMeta, options, optionsByCategory, type OptionCategory } from "@/lib/options"
 import { Landmark, Lightbulb, KeyRound, ArrowRight, type LucideIcon } from "lucide-react"
 
 const order: { key: OptionCategory; icon: LucideIcon }[] = [
@@ -18,11 +18,12 @@ export function OptionsPreview() {
             Your options
           </span>
           <h2 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Three paths forward — and 11 ways to get there
+            Three paths forward — and {options.length} ways to get there
           </h2>
           <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
-            The right choice depends on your equity, your income, and your goals. Here&apos;s the
-            big picture. Take the finder to see which specific options fit you.
+            The right choice depends on your equity, your income, and your goals — and selling is
+            only one of them. Here&apos;s the big picture. Take the finder to see which specific
+            options fit your situation.
           </p>
         </div>
 

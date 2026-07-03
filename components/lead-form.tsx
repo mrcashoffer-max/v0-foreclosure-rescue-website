@@ -93,6 +93,38 @@ export function LeadForm({ source = "website" }: { source?: string }) {
           autoComplete="street-address"
         />
       </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="county">
+            County <span className="text-muted-foreground">(optional)</span>
+          </Label>
+          <Input id="county" name="county" placeholder="Dallas County" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="auctionDate">
+            Auction date <span className="text-muted-foreground">(if known)</span>
+          </Label>
+          <Input id="auctionDate" name="auctionDate" placeholder="First Tuesday, or a date" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="goal">
+          What matters most to you? <span className="text-muted-foreground">(optional)</span>
+        </Label>
+        <select
+          id="goal"
+          name="goal"
+          defaultValue=""
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <option value="" disabled>
+            Select a goal
+          </option>
+          <option value="keep">I want to keep my home</option>
+          <option value="unsure">I&apos;m not sure yet — show me my options</option>
+          <option value="move">I&apos;m ready to move on with my equity</option>
+        </select>
+      </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="situation">
           Tell us about your situation <span className="text-muted-foreground">(optional)</span>

@@ -27,7 +27,14 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
   const [phase, setPhase] = useState<Phase>("intro")
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [contact, setContact] = useState({ name: "", phone: "", email: "", address: "" })
+  const [contact, setContact] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    county: "",
+    auctionDate: "",
+  })
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState("")
 
@@ -76,6 +83,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
     startTransition(async () => {
       const res = await submitWizardLead({
         ...contact,
+        goal: answers.goal,
         source,
         quizData: answers,
         recommendations: recommendations.map((r) => r.slug),
@@ -255,6 +263,30 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                     autoComplete="street-address"
                   />
                 </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="w-county">
+                      County <span className="text-muted-foreground">(optional)</span>
+                    </Label>
+                    <Input
+                      id="w-county"
+                      value={contact.county}
+                      onChange={(e) => setContact({ ...contact, county: e.target.value })}
+                      placeholder="Dallas County"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="w-auction">
+                      Auction date <span className="text-muted-foreground">(if known)</span>
+                    </Label>
+                    <Input
+                      id="w-auction"
+                      value={contact.auctionDate}
+                      onChange={(e) => setContact({ ...contact, auctionDate: e.target.value })}
+                      placeholder="First Tuesday, or a date"
+                    />
+                  </div>
+                </div>
               </div>
 
               {error && <p className="text-sm text-destructive">{error}</p>}
@@ -296,7 +328,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 {recommendations.map((opt, i) => (
                   <div
                     key={opt.slug}
-                    className="flex flex-col gap-2 rounded-2xl border border-border bg-background p-5"
+                    className="flex flex-col gap-3 rounded-2xl border border-border bg-background p-5"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className="flex items-center gap-2">
@@ -307,16 +339,34 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                       </span>
                       <Badge variant="secondary">{categoryMeta[opt.category].label}</Badge>
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{opt.tagline}.</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{opt.summary}</p>
+                    <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
+                      <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                        Why it may be worth exploring
+                      </span>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {opt.bestFor[0]}.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Suggested next step
+                      </span>
+                      <p className="text-sm leading-relaxed text-card-foreground">{opt.nextStep}</p>
+                    </div>
                     <Link
                       href={`/options#${opt.slug}`}
                       className="text-sm font-medium text-primary hover:underline"
                     >
-                      Learn how it works
+                      See full details, advantages &amp; trade-offs
                     </Link>
                   </div>
                 ))}
               </div>
+              <p className="text-pretty text-center text-xs leading-relaxed text-muted-foreground">
+                These are educational suggestions based on your answers — not advice. The right
+                choice is always yours to make.
+              </p>
 
               <div className="flex flex-col gap-3 rounded-2xl bg-secondary/60 p-5 text-center">
                 <p className="text-sm font-medium text-foreground">

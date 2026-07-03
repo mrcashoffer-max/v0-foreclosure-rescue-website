@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { categoryMeta, optionsByCategory, type OptionCategory } from "@/lib/options"
 import { site } from "@/lib/site"
-import { CheckCircle2, Phone, ChevronRight } from "lucide-react"
+import { CheckCircle2, Phone, ChevronRight, Plus, Minus, Info } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Your Foreclosure Options in Texas",
   description:
-    "Explore every option for a Texas homeowner in pre-foreclosure — from loan modifications and reinstatement to cash sales and short sales. Take our 2-minute finder to see what fits your situation.",
+    "Understand every option for a Texas homeowner in pre-foreclosure — from loan modifications, reinstatement, and forbearance to mortgage takeover (subject-to), cash sales, and short sales. Take our 2-minute finder to see what fits your situation.",
 }
 
 const order: OptionCategory[] = ["keep", "creative", "sell"]
@@ -47,6 +47,9 @@ export default function OptionsPage() {
             </h2>
             <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
               Browse the full range of solutions available to Texas homeowners, grouped by goal.
+              Selling is only one path here — for many families, keeping the home is the right
+              answer. Each option below includes what it is, why it may fit, the advantages, the
+              trade-offs, and a suggested next step.
             </p>
           </div>
 
@@ -61,35 +64,110 @@ export default function OptionsPage() {
                     {categoryMeta[category].description}
                   </p>
                 </div>
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-5">
                   {optionsByCategory(category).map((opt) => (
                     <div
                       key={opt.slug}
                       id={opt.slug}
-                      className="scroll-mt-24 flex flex-col gap-4 rounded-2xl border border-border bg-card p-6"
+                      className="scroll-mt-24 flex flex-col gap-5 rounded-2xl border border-border bg-card p-6 sm:p-7"
                     >
                       <div className="flex flex-col gap-1">
-                        <h4 className="text-lg font-semibold text-card-foreground">{opt.title}</h4>
+                        <h4 className="text-xl font-semibold text-card-foreground">{opt.title}</h4>
                         <p className="text-sm font-medium text-primary">{opt.tagline}</p>
                       </div>
-                      <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
-                        {opt.summary}
-                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          What it is
+                        </span>
+                        <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
+                          {opt.summary}
+                        </p>
+                      </div>
+
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <div className="flex flex-col gap-2">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Why it may fit
+                          </span>
+                          <ul className="flex flex-col gap-1.5">
+                            {opt.bestFor.map((item) => (
+                              <li
+                                key={item}
+                                className="flex items-start gap-2 text-sm text-card-foreground"
+                              >
+                                <CheckCircle2
+                                  className="mt-0.5 size-4 shrink-0 text-primary"
+                                  aria-hidden="true"
+                                />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Advantages
+                          </span>
+                          <ul className="flex flex-col gap-1.5">
+                            {opt.advantages.map((item) => (
+                              <li
+                                key={item}
+                                className="flex items-start gap-2 text-sm text-card-foreground"
+                              >
+                                <Plus
+                                  className="mt-0.5 size-4 shrink-0 text-primary"
+                                  aria-hidden="true"
+                                />
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
                       <div className="flex flex-col gap-2">
                         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                          Best if
+                          Trade-offs
                         </span>
                         <ul className="flex flex-col gap-1.5">
-                          {opt.bestFor.map((item) => (
-                            <li key={item} className="flex items-start gap-2 text-sm text-card-foreground">
-                              <CheckCircle2
-                                className="mt-0.5 size-4 shrink-0 text-primary"
+                          {opt.considerations.map((item) => (
+                            <li
+                              key={item}
+                              className="flex items-start gap-2 text-sm text-muted-foreground"
+                            >
+                              <Minus
+                                className="mt-0.5 size-4 shrink-0 text-muted-foreground"
                                 aria-hidden="true"
                               />
                               {item}
                             </li>
                           ))}
                         </ul>
+                      </div>
+
+                      {opt.misconceptions && (
+                        <div className="flex flex-col gap-2 rounded-xl border border-border bg-secondary/40 p-4">
+                          <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+                            <Info className="size-4 text-primary" aria-hidden="true" />
+                            Common misconceptions
+                          </span>
+                          <ul className="flex flex-col gap-1.5">
+                            {opt.misconceptions.map((item) => (
+                              <li key={item} className="text-sm leading-relaxed text-muted-foreground">
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div className="flex flex-col gap-1.5 border-t border-border pt-4">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                          Suggested next step
+                        </span>
+                        <p className="text-pretty text-sm leading-relaxed text-card-foreground">
+                          {opt.nextStep}
+                        </p>
                       </div>
                     </div>
                   ))}
