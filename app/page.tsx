@@ -1,4 +1,5 @@
 import { Hero } from "@/components/hero"
+import { DidYouGetALetter } from "@/components/did-you-get-a-letter"
 import { Reassurance } from "@/components/reassurance"
 import { HowItWorks } from "@/components/how-it-works"
 import { OptionsPreview } from "@/components/options-preview"
@@ -12,6 +13,7 @@ export default function Page() {
   return (
     <>
       <Hero />
+      <DidYouGetALetter />
       <Reassurance />
       <HowItWorks />
       <OptionsPreview />

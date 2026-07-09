@@ -72,6 +72,11 @@ export function SiteFooter() {
 
         <div className="mt-12 border-t border-border pt-6">
           <p className="text-xs leading-relaxed text-muted-foreground">
+            {site.name} is run by a Texas real estate investor. Buying your home is one option we
+            offer, but never the only one — and often not the right one. We&apos;ll always tell you
+            honestly.
+          </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
             This website is for informational purposes only and does not constitute legal, financial,
             or tax advice. Foreclosure laws and timelines vary by situation. Consult a qualified
             professional or a HUD-certified housing counselor before making decisions. &copy;{" "}

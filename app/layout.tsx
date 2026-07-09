@@ -18,10 +18,10 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://txforeclosurerelief.com'),
+  metadataBase: new URL('https://homerescuetx.com'),
   title: {
-    default: 'Texas Foreclosure Relief | Know Your Options & Keep Your Home',
-    template: '%s | Texas Foreclosure Relief',
+    default: 'Home Rescue Texas | Know Your Options & Keep Your Home',
+    template: '%s | Home Rescue Texas',
   },
   description:
     'Behind on your mortgage in Texas? Explore every option to keep or sell your home and get a free, confidential consultation with a foreclosure specialist with 20+ years of experience.',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     'foreclosure specialist',
   ],
   openGraph: {
-    title: 'Texas Foreclosure Relief | Know Your Options',
+    title: 'Home Rescue Texas | Know Your Options',
     description:
       'Behind on your mortgage? You still have options. Free, confidential consultation with a Texas foreclosure specialist.',
     type: 'website',

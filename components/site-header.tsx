@@ -22,10 +22,10 @@ export function SiteHeader() {
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <ShieldCheck className="size-5" aria-hidden="true" />
           </span>
-          <span className="text-base font-semibold leading-tight text-foreground">
-            Texas Foreclosure
-            <span className="block text-xs font-normal text-muted-foreground">
-              Relief &amp; Options
+          <span className="flex flex-col text-base font-semibold leading-tight text-foreground">
+            <span>Home Rescue Texas</span>
+            <span className="text-xs font-normal text-muted-foreground">
+              Foreclosure options &amp; guidance
             </span>
           </span>
         </Link>

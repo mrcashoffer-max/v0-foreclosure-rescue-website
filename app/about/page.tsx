@@ -107,6 +107,22 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-4xl px-4 pb-4 sm:px-6">
+        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+          <h2 className="text-balance text-2xl font-semibold tracking-tight">
+            How we work — and how we make money
+          </h2>
+          <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
+            {site.name} is run by Chris, a Texas real estate investor. That means one of the options
+            we can offer is buying your home directly. But it&apos;s only one option among many, and
+            often it isn&apos;t the right one for you. We earn money only when a homeowner chooses to
+            sell to us. We earn nothing when you keep your home, work out a plan with your lender, or
+            sell on the open market — and we&apos;ll still tell you honestly when one of those is
+            your better path. Being upfront about this is the entire point of this site.
+          </p>
+        </div>
+      </section>
+
       <section className="border-t border-border bg-secondary/40">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-20">
           <div className="mx-auto max-w-2xl text-center">

@@ -163,7 +163,7 @@ export function recommendOptions(answers: Record<string, string>): ForeclosureOp
     .filter((r) => r.score > 0)
     .sort((a, b) => b.score - a.score)
 
-  const top = ranked.slice(0, 3).map((r) => r.option)
+  const top = ranked.slice(0, 4).map((r) => r.option)
 
   // Sensible fallback if nothing scored
   if (top.length === 0) {
@@ -172,4 +172,30 @@ export function recommendOptions(answers: Record<string, string>): ForeclosureOp
     )
   }
   return top
+}
+
+/**
+ * Builds a short, plain-language reason an option may fit, tied to the
+ * visitor's actual answers. Falls back to the option's own "best for" note.
+ */
+export function fitReason(option: ForeclosureOption, answers: Record<string, string>): string {
+  const { goal, stage, equity } = answers
+
+  if (goal === "keep" && option.category === "keep") {
+    return "You told us keeping your home matters most — this is one of the paths that works toward staying put."
+  }
+  if (goal === "move" && option.category === "sell") {
+    return "Since you're open to moving on, this can help you exit on your terms and protect your equity and credit."
+  }
+  if (stage === "sale") {
+    return "With a sale date scheduled, this is one of the faster-acting options to consider right away."
+  }
+  if (equity === "underwater" && option.slug === "short-sale") {
+    return "Because you may owe more than the home is worth, this is designed for exactly that situation."
+  }
+  if (equity === "yes" && option.category === "sell") {
+    return "You indicated you have equity — selling before the auction is what preserves it for your family."
+  }
+
+  return option.bestFor[0]
 }

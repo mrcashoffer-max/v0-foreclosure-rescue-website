@@ -49,7 +49,7 @@
 }
 
 :root {
-  /* Texas Foreclosure Relief theme: teal primary + warm neutrals */
+  /* Home Rescue Texas theme: teal primary + warm neutrals */
   --background: oklch(0.99 0.004 95);
   --foreground: oklch(0.23 0.02 230);
   --card: oklch(1 0 0);

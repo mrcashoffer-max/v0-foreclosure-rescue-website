@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { wizardQuestions, recommendOptions } from "@/lib/wizard"
+import { wizardQuestions, recommendOptions, fitReason } from "@/lib/wizard"
 import { categoryMeta } from "@/lib/options"
 import { submitWizardLead } from "@/app/actions/leads"
 import { site } from "@/lib/site"
@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  Clock,
   Phone,
   ShieldCheck,
   Sparkles,
@@ -324,6 +325,23 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 </p>
               </div>
 
+              {answers.stage === "sale" && (
+                <div className="flex flex-col gap-2 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Clock className="size-4 text-primary" aria-hidden="true" />
+                    A sale date is scheduled — time matters, but you have options
+                  </span>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    Because a date is set, the faster-acting options are listed first. You can also
+                    speak with a free HUD-approved housing counselor right now at{" "}
+                    <a href="tel:+18889954673" className="font-medium text-primary hover:underline">
+                      1-888-995-HOPE
+                    </a>{" "}
+                    (1-888-995-4673).
+                  </p>
+                </div>
+              )}
+
               <div className="flex flex-col gap-3">
                 {recommendations.map((opt, i) => (
                   <div
@@ -342,10 +360,10 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                     <p className="text-sm leading-relaxed text-muted-foreground">{opt.summary}</p>
                     <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
                       <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                        Why it may be worth exploring
+                        Why this may fit your situation
                       </span>
                       <p className="text-sm leading-relaxed text-muted-foreground">
-                        {opt.bestFor[0]}.
+                        {fitReason(opt, answers)}
                       </p>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -370,9 +388,17 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
 
               <div className="flex flex-col gap-3 rounded-2xl bg-secondary/60 p-5 text-center">
                 <p className="text-sm font-medium text-foreground">
-                  Want to talk it through now?
+                  Want a person to walk through these with you?
                 </p>
-                <Button render={<a href={site.phoneHref} />} nativeButton={false} size="lg">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Chris can help — no pressure, no obligation.
+                </p>
+                <Button
+                  render={<a href={site.phoneHref} />}
+                  nativeButton={false}
+                  variant="outline"
+                  size="lg"
+                >
                   <Phone className="size-4" aria-hidden="true" />
                   Call {site.phone}
                 </Button>
@@ -383,6 +409,12 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                   Or keep reading our free guides
                 </Link>
               </div>
+
+              <p className="text-pretty text-center text-xs leading-relaxed text-muted-foreground">
+                {site.name} is run by a Texas real estate investor. Buying your home is one option we
+                offer, but never the only one — and often not the right one. We&apos;ll always tell
+                you honestly.
+              </p>
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Phone, Mail, Globe } from "lucide-react"
+import { Phone, Mail } from "lucide-react"
+import { site } from "@/lib/site"
 
 export function Advisor() {
   return (
@@ -32,21 +33,17 @@ export function Advisor() {
           </p>
           <p className="font-medium text-foreground">Chris Scott, Pre-Foreclosure Specialist</p>
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground">
-            <a href="tel:+14695093031" className="flex items-center gap-2 hover:text-foreground">
+            <a href={site.phoneHref} className="flex items-center gap-2 hover:text-foreground">
               <Phone className="size-4 text-primary" aria-hidden="true" />
-              469-509-3031
+              {site.phone}
             </a>
             <a
-              href="mailto:Chris@mrcashoffer.com"
+              href={`mailto:${site.email}`}
               className="flex items-center gap-2 hover:text-foreground"
             >
               <Mail className="size-4 text-primary" aria-hidden="true" />
-              Chris@mrcashoffer.com
+              {site.email}
             </a>
-            <span className="flex items-center gap-2">
-              <Globe className="size-4 text-primary" aria-hidden="true" />
-              mrcashoffer.com
-            </span>
           </div>
           <div className="pt-1">
             <Button render={<a href="#consultation" />} nativeButton={false} size="lg">

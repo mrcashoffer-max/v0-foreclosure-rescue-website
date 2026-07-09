@@ -21,10 +21,14 @@ export default function SuccessStoriesPage() {
           <h1 className="mt-2 text-balance text-4xl font-semibold tracking-tight md:text-5xl">
             Different families, different paths, the same relief
           </h1>
+          <p className="mt-3 max-w-2xl text-pretty text-sm italic leading-relaxed text-muted-foreground">
+            These stories are illustrative examples based on common Texas foreclosure situations.
+            Details have been changed to protect privacy.
+          </p>
           <p className="mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
             Every situation is unique — and the right answer isn&apos;t always the same. These
-            educational stories show how real Texas families thought through their options and found
-            a path forward. Details are representative composites, not identifiable clients.
+            educational stories show how Texas families thought through their options and found a
+            path forward.
           </p>
         </div>
       </section>

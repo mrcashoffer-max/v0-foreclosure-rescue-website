@@ -1,8 +1,8 @@
 export const site = {
-  name: "Texas Foreclosure Relief",
+  name: "Home Rescue Texas",
   phone: "469-509-3031",
   phoneHref: "tel:+14695093031",
-  email: "chris@txforeclosurerelief.com",
+  email: "chris@homerescuetx.com",
   specialist: "Chris Scott",
   serviceArea: "Dallas–Fort Worth & across Texas",
 }

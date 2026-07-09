@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://txforeclosurerelief.com/sitemap.xml",
+    sitemap: "https://homerescuetx.com/sitemap.xml",
   }
 }

@@ -4,7 +4,7 @@ import { counties } from "@/lib/counties"
 import { stories } from "@/lib/stories"
 import { resources } from "@/lib/resources"
 
-const baseUrl = "https://txforeclosurerelief.com"
+const baseUrl = "https://homerescuetx.com"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
