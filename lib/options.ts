@@ -1,4 +1,4 @@
-export type OptionCategory = "keep" | "creative" | "sell"
+export type OptionCategory = "keep" | "creative" | "sell" | "tax" | "estate"
 
 export type ForeclosureOption = {
   slug: string
@@ -37,6 +37,16 @@ export const categoryMeta: Record<
     label: "Sell & Move Forward",
     description:
       "Protect your equity and your credit by selling on your terms before the auction.",
+  },
+  tax: {
+    label: "Property Tax Solutions",
+    description:
+      "Resolve delinquent property taxes and stop a tax sale — through a payment plan, a deferral you may qualify for, or a property tax loan.",
+  },
+  estate: {
+    label: "Inherited & Probate",
+    description:
+      "For heirs and inherited homes: clear the title and navigate probate first — then choose the path that fits. You often have more time than you think.",
   },
 }
 
@@ -345,6 +355,131 @@ export const options: ForeclosureOption[] = [
     ],
     nextStep:
       "If staying put matters most, ask for the lease terms and any buy-back option in writing, and have them reviewed before you sign.",
+  },
+  {
+    slug: "hud-counseling",
+    title: "Free HUD-Approved Counseling",
+    category: "keep",
+    tagline: "No-cost guidance from a certified counselor",
+    summary:
+      "A HUD-approved housing counselor reviews your situation at no cost, explains your options in plain language, and can help you communicate with your servicer. It's free, unbiased, and available nationwide.",
+    bestFor: [
+      "You want free, unbiased guidance before deciding anything",
+      "You're not sure where you stand or what to ask",
+      "You'd like help talking to your lender or servicer",
+    ],
+    advantages: [
+      "Completely free and independent — no sales pressure",
+      "Counselors are certified and accountable to HUD",
+      "Available by phone nationwide at 1-888-995-HOPE",
+    ],
+    considerations: [
+      "Counselors advise and guide, but don't lend money",
+      "Wait times can vary during busy periods",
+      "Best paired with acting on the plan you build together",
+    ],
+    nextStep:
+      "Call the HOPE Hotline at 1-888-995-4673 (1-888-995-HOPE) to be connected with a free HUD-approved counselor in your area.",
+  },
+  {
+    slug: "deed-in-lieu",
+    title: "Deed in Lieu of Foreclosure",
+    category: "sell",
+    tagline: "Hand the deed back to the lender",
+    summary:
+      "You voluntarily transfer ownership of the home back to the lender to satisfy the debt, avoiding a foreclosure sale. It's an option when selling isn't possible and you're ready to move on.",
+    bestFor: [
+      "You owe about as much as (or more than) the home is worth",
+      "A traditional or short sale isn't practical",
+      "You're ready to move on with less credit damage than foreclosure",
+    ],
+    advantages: [
+      "Generally less damaging to credit than a completed foreclosure",
+      "Ends the mortgage obligation without an auction",
+      "May include relocation assistance from some lenders",
+    ],
+    considerations: [
+      "The lender must agree and usually requires the home be listed first",
+      "Won't work if there are other liens on the property",
+      "Possible tax implications on any forgiven balance",
+    ],
+    nextStep:
+      "Ask your servicer whether they accept a deed in lieu, what conditions apply, and whether any relocation assistance is available.",
+  },
+  {
+    slug: "property-tax-loan",
+    title: "Property Tax Loan",
+    category: "tax",
+    tagline: "A lender pays your taxes; you repay over time",
+    summary:
+      "A licensed Texas property tax lender pays your delinquent county taxes in full — stopping penalties, interest, and a tax sale — and you repay them on a fixed schedule. Consider this after checking whether a county plan or deferral fits first.",
+    bestFor: [
+      "Your county taxes are delinquent and penalties are growing",
+      "You don't qualify for or can't wait on a county plan",
+      "You need the tax debt cleared quickly to stop a tax sale",
+    ],
+    advantages: [
+      "Pays the county in full and stops penalties and a tax sale fast",
+      "Fixed, predictable repayment schedule",
+      "Approval is based largely on the property, not just credit",
+    ],
+    considerations: [
+      "Adds interest and fees — compare against a county plan first",
+      "The tax lien transfers to the lender until repaid",
+      "Only work with licensed, reputable tax lenders",
+    ],
+    nextStep:
+      "First ask your county tax office about an installment plan or deferral; if those don't fit, compare quotes from licensed property tax lenders.",
+  },
+  {
+    slug: "tax-payment-plan",
+    title: "County Payment Plan or Deferral",
+    category: "tax",
+    tagline: "Installment agreement or a homestead deferral",
+    summary:
+      "Many Texas counties allow installment agreements on delinquent property taxes. And Texas homeowners who are 65 or older or disabled can often defer property taxes on their homestead entirely for as long as they live there.",
+    bestFor: [
+      "You want the lowest-cost way to handle delinquent taxes",
+      "You're 65+ or disabled and this is your homestead (deferral)",
+      "You can make steady monthly payments to the county",
+    ],
+    advantages: [
+      "Usually far cheaper than a loan — you deal directly with the county",
+      "Deferral can pause tax collection entirely for those who qualify",
+      "Keeps you in control without a new lender involved",
+    ],
+    considerations: [
+      "Installment terms and eligibility vary by county",
+      "Deferral postpones taxes — they accrue and are due later",
+      "You must apply and stay in communication with the tax office",
+    ],
+    nextStep:
+      "Call your county tax assessor-collector's office to ask about installment agreements, and — if you're 65+ or disabled — a homestead tax deferral.",
+  },
+  {
+    slug: "probate-heir",
+    title: "Probate & Title Resolution",
+    category: "estate",
+    tagline: "Clear ownership first, then choose your path",
+    summary:
+      "When you've inherited a home that's in default, the first step is usually establishing clear legal ownership through probate. Once the title is clear, every other option — keeping the home or selling it — becomes available to you.",
+    bestFor: [
+      "You inherited a home that's behind on payments or taxes",
+      "The title is still in a deceased owner's name",
+      "You're unsure what authority you have to act",
+    ],
+    advantages: [
+      "Establishes your legal right to make decisions about the home",
+      "Unlocks every keep-or-sell option once title is clear",
+      "You often have more time than you'd expect to sort it out",
+    ],
+    considerations: [
+      "Probate timelines and requirements vary by situation",
+      "May involve other heirs who also have a say",
+      "Best handled with a probate or real estate attorney",
+    ],
+    nextStep:
+      "Speak with a probate attorney about establishing clear title, and let the servicer or county know you're an heir working through the estate.",
   },
 ]
 

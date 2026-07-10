@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { categoryMeta, options, optionsByCategory, type OptionCategory } from "@/lib/options"
+import { categoryMeta, optionsByCategory, type OptionCategory } from "@/lib/options"
 import { Landmark, Lightbulb, KeyRound, ArrowRight, type LucideIcon } from "lucide-react"
 
 const order: { key: OptionCategory; icon: LucideIcon }[] = [
@@ -10,6 +10,8 @@ const order: { key: OptionCategory; icon: LucideIcon }[] = [
 ]
 
 export function OptionsPreview() {
+  const shownCount = order.reduce((n, { key }) => n + optionsByCategory(key).length, 0)
+
   return (
     <section id="options" className="scroll-mt-20 border-b border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
@@ -18,7 +20,7 @@ export function OptionsPreview() {
             Your options
           </span>
           <h2 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Three paths forward — and {options.length} ways to get there
+            Three paths forward — and {shownCount} ways to get there
           </h2>
           <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
             The right choice depends on your equity, your income, and your goals — and selling is

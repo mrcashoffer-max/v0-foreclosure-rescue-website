@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "Understand every option for a Texas homeowner in pre-foreclosure — from loan modifications, reinstatement, and forbearance to mortgage takeover (subject-to), cash sales, and short sales. Take our 2-minute finder to see what fits your situation.",
 }
 
-const order: OptionCategory[] = ["keep", "creative", "sell"]
+const order: OptionCategory[] = ["keep", "creative", "sell", "tax", "estate"]
 
 export default function OptionsPage() {
   return (
