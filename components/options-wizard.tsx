@@ -8,10 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import {
-  resolveQuestions,
-  baseQuestions,
-  recommendOptions,
+  finderQuestions,
+  totalFinderQuestions,
+  toFinderAnswers,
+  analyze,
   fitReason,
+  texasGuidance,
   isTimeSensitive,
   isMostlyUnsure,
 } from "@/lib/wizard"
@@ -24,11 +26,16 @@ import {
   CalendarClock,
   CheckCircle2,
   Clock,
+  Gauge,
+  ListChecks,
   LifeBuoy,
+  MapPin,
   Phone,
   Plus,
   ShieldCheck,
   Sparkles,
+  ThumbsUp,
+  TriangleAlert,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -39,16 +46,11 @@ const HOPE_TEL = "tel:+18889954673"
 export function OptionsWizard({ source = "options-wizard" }: { source?: string }) {
   const [phase, setPhase] = useState<Phase>("intro")
   const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [single, setSingle] = useState<Record<string, string>>({})
+  const [challenges, setChallenges] = useState<string[]>([])
   const [awaitingDate, setAwaitingDate] = useState(false)
 
-  const [contact, setContact] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    county: "",
-  })
+  const [contact, setContact] = useState({ name: "", phone: "", email: "", address: "", county: "" })
   const [showDetails, setShowDetails] = useState(false)
   const [details, setDetails] = useState({ balance: "", lender: "", payment: "" })
   const [submitted, setSubmitted] = useState(false)
@@ -56,49 +58,46 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState("")
 
-  const questions = useMemo(() => resolveQuestions(answers), [answers])
-  const totalQuestions = baseQuestions.length
-  const recommendations = useMemo(() => recommendOptions(answers), [answers])
+  const total = totalFinderQuestions
+  const finderAnswers = useMemo(() => toFinderAnswers(single, challenges), [single, challenges])
+  const analysis = useMemo(() => analyze(finderAnswers), [finderAnswers])
 
-  const current = questions[step]
-  const selectedValue = current ? answers[current.id] : undefined
-  const needsDate =
-    awaitingDate && !!current?.datePickerFor?.includes(selectedValue ?? "")
+  const best = analysis.ranked[0]
+  const rest = analysis.ranked.slice(1)
 
-  const progress =
-    phase === "intro" ? 5 : phase === "questions" ? ((step + 1) / totalQuestions) * 95 : 100
+  const current = finderQuestions[step]
+  const isMulti = !!current?.multi
+  const selectedValue = current ? single[current.id] : undefined
+  const needsDate = awaitingDate && !!current?.datePickerFor?.includes(selectedValue ?? "")
+  const canContinueMulti = challenges.length > 0
+
+  const progress = phase === "intro" ? 5 : phase === "questions" ? ((step + 1) / total) * 95 : 100
 
   function advance() {
     setAwaitingDate(false)
     setTimeout(() => {
-      if (step < totalQuestions - 1) {
-        setStep((s) => s + 1)
-      } else {
-        setPhase("results")
-      }
-    }, 180)
+      if (step < total - 1) setStep((s) => s + 1)
+      else setPhase("results")
+    }, 160)
   }
 
-  function chooseAnswer(id: string, value: string) {
-    setAnswers((prev) => {
+  function chooseSingle(id: string, value: string) {
+    setSingle((prev) => {
       const next = { ...prev, [id]: value }
-      // Reset a previously chosen date if the answer no longer needs one.
-      if (id === "stage" && !current?.datePickerFor?.includes(value)) {
-        delete next.saleDate
-      }
-      // Changing the risk resets the stage answer since Q2 options differ.
-      if (id === "risk") {
-        delete next.stage
-        delete next.saleDate
-      }
+      if (id === "stage" && !current?.datePickerFor?.includes(value)) delete next.saleDate
       return next
     })
-
     if (current?.datePickerFor?.includes(value)) {
       setAwaitingDate(true)
       return
     }
     advance()
+  }
+
+  function toggleChallenge(value: string) {
+    setChallenges((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+    )
   }
 
   function goBack() {
@@ -109,7 +108,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
     }
     if (phase === "results") {
       setPhase("questions")
-      setStep(totalQuestions - 1)
+      setStep(total - 1)
     } else if (phase === "questions" && step > 0) {
       setStep((s) => s - 1)
     } else if (phase === "questions" && step === 0) {
@@ -117,10 +116,10 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
     }
   }
 
-  function submitContact() {
+  function unlockPlan() {
     setError("")
     if (!contact.name || !contact.phone || !contact.email) {
-      setError("Please add your name, phone, and email so we can reach out.")
+      setError("Please add your name, phone, and email so we can send your full plan.")
       return
     }
     startTransition(async () => {
@@ -130,24 +129,21 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
         email: contact.email,
         address: contact.address,
         county: contact.county,
-        auctionDate: answers.saleDate,
-        goal: answers.goal,
+        auctionDate: single.saleDate,
+        goal: single.goal,
         source,
         quizData: {
-          ...answers,
+          ...single,
+          challenges: challenges.join(", "),
           ...(showDetails
-            ? {
-                approxBalance: details.balance,
-                lender: details.lender,
-                monthlyPayment: details.payment,
-              }
+            ? { approxBalance: details.balance, lender: details.lender, monthlyPayment: details.payment }
             : {}),
         },
-        recommendations: recommendations.map((r) => r.slug),
+        recommendations: analysis.ranked.map((r) => r.slug),
       })
       if (res.ok) {
         setSubmitted(true)
-        toast.success("Thanks — Chris will reach out. No pressure.")
+        toast.success("Your complete action plan is unlocked below.")
       } else {
         setError(res.message)
         toast.error(res.message)
@@ -155,17 +151,14 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
     })
   }
 
-  const dateLabel = answers.stage === "taxsale" ? "When is the tax sale?" : "When is the auction?"
-
   return (
     <div className="mx-auto w-full max-w-2xl">
       <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
-        {/* Progress bar */}
         <div className="border-b border-border bg-secondary/40 px-6 py-4">
           <div className="mb-2 flex items-center justify-between text-xs font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
-              Foreclosure Options Finder
+              Homeowner Decision Assistant
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
@@ -173,6 +166,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
         </div>
 
         <div className="p-6 sm:p-8">
+          {/* ---------------- INTRO ---------------- */}
           {phase === "intro" && (
             <div className="flex flex-col items-center gap-6 py-6 text-center">
               <span className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -180,30 +174,31 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
               </span>
               <div className="flex flex-col gap-3">
                 <h2 className="text-balance text-2xl font-semibold text-card-foreground sm:text-3xl">
-                  See which options fit your situation
+                  Let&apos;s find the right path for your situation
                 </h2>
                 <p className="text-pretty leading-relaxed text-muted-foreground">
-                  Answer {totalQuestions} quick questions and we&apos;ll show you a personalized
-                  shortlist right away — no contact info required to see your results. It takes less
-                  than two minutes.
+                  Answer {total} short questions and we&apos;ll analyze your situation like an
+                  experienced Texas foreclosure advisor would — then show you a personalized
+                  recommendation. It takes about two to three minutes.
                 </p>
               </div>
               <Button size="lg" className="w-full sm:w-auto" onClick={() => setPhase("questions")}>
-                Start now
+                Begin
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Button>
               <p className="flex items-center gap-2 text-xs text-muted-foreground">
                 <ShieldCheck className="size-3.5" aria-hidden="true" />
-                Private and confidential. No commitment required.
+                Private and confidential. No contact info needed to see your recommendation.
               </p>
             </div>
           )}
 
+          {/* ---------------- QUESTIONS ---------------- */}
           {phase === "questions" && current && (
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-xs font-medium uppercase tracking-wide text-primary">
-                  Question {step + 1} of {totalQuestions}
+                  Question {step + 1} of {total}
                 </span>
                 <h2 className="text-balance text-xl font-semibold text-card-foreground sm:text-2xl">
                   {current.question}
@@ -217,12 +212,17 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
 
               <div className="flex flex-col gap-3">
                 {current.options.map((opt) => {
-                  const selected = answers[current.id] === opt.value
+                  const selected = isMulti
+                    ? challenges.includes(opt.value)
+                    : single[current.id] === opt.value
                   return (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => chooseAnswer(current.id, opt.value)}
+                      onClick={() =>
+                        isMulti ? toggleChallenge(opt.value) : chooseSingle(current.id, opt.value)
+                      }
+                      aria-pressed={selected}
                       className={`group flex items-center justify-between gap-4 rounded-2xl border p-4 text-left transition-all ${
                         selected
                           ? "border-primary bg-primary/5 ring-1 ring-primary"
@@ -231,12 +231,12 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                     >
                       <span className="flex flex-col gap-0.5">
                         <span className="font-medium text-card-foreground">{opt.label}</span>
-                        {opt.hint && (
-                          <span className="text-sm text-muted-foreground">{opt.hint}</span>
-                        )}
+                        {opt.hint && <span className="text-sm text-muted-foreground">{opt.hint}</span>}
                       </span>
                       <span
-                        className={`flex size-6 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                        className={`flex size-6 shrink-0 items-center justify-center border transition-colors ${
+                          isMulti ? "rounded-md" : "rounded-full"
+                        } ${
                           selected
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border text-transparent group-hover:border-primary/50"
@@ -250,6 +250,13 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 })}
               </div>
 
+              {isMulti && (
+                <Button onClick={advance} disabled={!canContinueMulti}>
+                  Continue
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Button>
+              )}
+
               {needsDate && (
                 <div className="flex flex-col gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4">
                   <Label
@@ -257,16 +264,14 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                     className="flex items-center gap-2 text-sm font-medium text-foreground"
                   >
                     <CalendarClock className="size-4 text-primary" aria-hidden="true" />
-                    {dateLabel} <span className="text-muted-foreground">(if you know it)</span>
+                    When is the sale? <span className="text-muted-foreground">(if you know it)</span>
                   </Label>
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <Input
                       id="w-saledate"
                       type="date"
-                      value={answers.saleDate ?? ""}
-                      onChange={(e) =>
-                        setAnswers((prev) => ({ ...prev, saleDate: e.target.value }))
-                      }
+                      value={single.saleDate ?? ""}
+                      onChange={(e) => setSingle((prev) => ({ ...prev, saleDate: e.target.value }))}
                       className="sm:flex-1"
                     />
                     <Button onClick={advance} className="shrink-0">
@@ -289,38 +294,41 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                   <ArrowLeft className="size-4" aria-hidden="true" />
                   Back
                 </Button>
-                {!needsDate && (
+                {!needsDate && !isMulti && (
                   <span className="text-xs text-muted-foreground">Select an answer to continue</span>
+                )}
+                {isMulti && (
+                  <span className="text-xs text-muted-foreground">Choose any that apply</span>
                 )}
               </div>
             </div>
           )}
 
-          {phase === "results" && (
+          {/* ---------------- RESULTS ---------------- */}
+          {phase === "results" && best && (
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2 text-center">
                 <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <Sparkles className="size-6" aria-hidden="true" />
                 </span>
                 <h2 className="text-balance text-xl font-semibold text-card-foreground sm:text-2xl">
-                  Options worth exploring for your situation
+                  We&apos;ve analyzed your situation
                 </h2>
                 <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
-                  Based on your answers, here&apos;s a shortlist of paths that may fit — ordered by
-                  what makes sense for you, not by what benefits anyone else.
+                  Based on your answers, here&apos;s the option that appears to fit you best — and
+                  why. This is a starting point, not advice.
                 </p>
               </div>
 
-              {isTimeSensitive(answers) && (
+              {isTimeSensitive(finderAnswers) && (
                 <div className="flex flex-col gap-2 rounded-2xl border border-primary/30 bg-primary/5 p-4">
                   <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <Clock className="size-4 text-primary" aria-hidden="true" />
-                    A {answers.stage === "taxsale" ? "tax sale" : "sale date"} is scheduled — time
-                    matters, but you have options
+                    Time matters here — but you still have options
                   </span>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    Because a date is set, the faster-acting options are listed first. You can also
-                    speak with a free HUD-approved housing counselor right now at{" "}
+                    Because things are moving quickly, we&apos;ve prioritized faster-acting paths. You
+                    can also speak with a free HUD-approved housing counselor right now at{" "}
                     <a href={HOPE_TEL} className="font-medium text-primary hover:underline">
                       1-888-995-HOPE
                     </a>{" "}
@@ -329,105 +337,97 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 </div>
               )}
 
-              {isMostlyUnsure(answers) && (
+              {isMostlyUnsure(finderAnswers) && (
                 <div className="flex flex-col gap-2 rounded-2xl border border-border bg-secondary/50 p-4">
                   <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <LifeBuoy className="size-4 text-primary" aria-hidden="true" />
                     Not sure where you stand? That&apos;s okay.
                   </span>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    Here&apos;s a gentle overview to start with. A free HUD-approved counselor can
-                    help you figure out exactly where you are — no cost, no pressure — at{" "}
-                    <a href={HOPE_TEL} className="font-medium text-primary hover:underline">
-                      1-888-995-HOPE
-                    </a>
-                    .
+                    We&apos;ve started you with a gentle overview. A free HUD-approved counselor can
+                    help pinpoint exactly where you are — no cost, no pressure.
                   </p>
                 </div>
               )}
 
-              <div className="flex flex-col gap-3">
-                {recommendations.map((opt, i) => (
-                  <div
-                    key={opt.slug}
-                    className="flex flex-col gap-3 rounded-2xl border border-border bg-background p-5"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="flex items-center gap-2">
-                        <span className="flex size-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                          {i + 1}
-                        </span>
-                        <span className="font-semibold text-card-foreground">{opt.title}</span>
-                      </span>
-                      <Badge variant="secondary">{categoryMeta[opt.category].label}</Badge>
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{opt.summary}</p>
-                    <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                        Why this may fit your situation
-                      </span>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
-                        {fitReason(opt, answers)}
-                      </p>
-                    </div>
-                    <Link
-                      href={`/options#${opt.slug}`}
-                      className="text-sm font-medium text-primary hover:underline"
-                    >
-                      Learn more about {opt.title}
-                    </Link>
+              {/* Best initial recommendation */}
+              <div className="flex flex-col gap-4 rounded-2xl border border-primary/40 bg-background p-5 shadow-sm">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                      Best initial recommendation
+                    </span>
+                    <Badge variant="secondary">{categoryMeta[best.category].label}</Badge>
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-lg font-semibold text-card-foreground">{best.title}</h3>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Gauge className="size-3.5 text-primary" aria-hidden="true" />
+                      {analysis.confidence} match for your situation
+                    </span>
+                    <Progress value={analysis.confidenceScore} className="h-1.5" />
+                  </div>
+                </div>
 
-              <p className="text-pretty text-center text-xs leading-relaxed text-muted-foreground">
-                These are educational suggestions based on your answers — not advice. The right
-                choice is always yours to make.
-              </p>
+                <p className="text-sm leading-relaxed text-muted-foreground">{best.summary}</p>
 
-              {/* Secondary, optional CTA */}
-              <div className="flex flex-col gap-3 rounded-2xl bg-secondary/60 p-5 text-center">
-                <p className="text-sm font-medium text-foreground">
-                  Want a person to walk through these with you?
-                </p>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  Chris can help — no pressure, no obligation.
-                </p>
-                <Button
-                  render={<a href={site.phoneHref} />}
-                  nativeButton={false}
-                  variant="outline"
-                  size="lg"
+                <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                    Why this fits you
+                  </span>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {fitReason(best, finderAnswers)}
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1 rounded-xl border border-border p-3">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                      <ThumbsUp className="size-3.5 text-primary" aria-hidden="true" />
+                      Key advantage
+                    </span>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{best.advantages[0]}</p>
+                  </div>
+                  <div className="flex flex-col gap-1 rounded-xl border border-border p-3">
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                      <TriangleAlert className="size-3.5 text-primary" aria-hidden="true" />
+                      Keep in mind
+                    </span>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {best.considerations[0]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1 rounded-xl border border-dashed border-primary/40 p-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                    Suggested next step
+                  </span>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{best.nextStep}</p>
+                </div>
+
+                <Link
+                  href={`/options#${best.slug}`}
+                  className="text-sm font-medium text-primary hover:underline"
                 >
-                  <Phone className="size-4" aria-hidden="true" />
-                  Call {site.phone}
-                </Button>
-                <Link href="/guides" className="text-sm font-medium text-primary hover:underline">
-                  Or keep reading our free guides
+                  Learn more about {best.title}
                 </Link>
               </div>
 
-              {/* Optional contact + deeper-details step (never required) */}
-              {submitted ? (
-                <div className="flex flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center">
-                  <CheckCircle2 className="size-8 text-primary" aria-hidden="true" />
-                  <p className="font-medium text-foreground">
-                    Thanks, {contact.name.split(" ")[0] || "there"} — we&apos;ll be in touch.
-                  </p>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    Chris will review your answers and reach out with clear next steps. No pressure,
-                    no obligation.
-                  </p>
-                </div>
-              ) : (
+              {/* Unlock the complete action plan */}
+              {!submitted ? (
                 <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5">
                   <div className="flex flex-col gap-1">
-                    <h3 className="font-semibold text-card-foreground">
-                      Optional: save your results or get a callback
+                    <h3 className="flex items-center gap-2 font-semibold text-card-foreground">
+                      <ListChecks className="size-4 text-primary" aria-hidden="true" />
+                      Your analysis found {rest.length > 0 ? `${rest.length} more option${rest.length > 1 ? "s" : ""}` : "more guidance"} and a complete action plan
                     </h3>
                     <p className="text-sm leading-relaxed text-muted-foreground">
-                      You already have your options above. Only share your details if you&apos;d like
-                      Chris to reach out or send you a written summary.
+                      Tell us where to send it and we&apos;ll put together your full personalized plan:
+                      your other recommended options, Texas-specific guidance, the deadlines that
+                      matter, and clear next steps. {site.specialist} will also personally review your
+                      situation to see if there are opportunities the automated analysis may have
+                      missed.
                     </p>
                   </div>
 
@@ -491,7 +491,6 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                     </div>
                   </div>
 
-                  {/* Deeper-details opt-in */}
                   {showDetails ? (
                     <div className="flex flex-col gap-4 rounded-xl border border-border bg-secondary/30 p-4">
                       <p className="text-sm font-medium text-foreground">
@@ -540,20 +539,104 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
 
                   {error && <p className="text-sm text-destructive">{error}</p>}
 
-                  <Button onClick={submitContact} disabled={isPending}>
-                    {isPending ? "Sending..." : "Send my details to Chris"}
+                  <Button onClick={unlockPlan} disabled={isPending} size="lg">
+                    {isPending ? "Preparing your plan..." : "Show my complete action plan"}
                   </Button>
                   <p className="flex items-center justify-center gap-2 text-center text-xs text-muted-foreground">
                     <ShieldCheck className="size-3.5 shrink-0" aria-hidden="true" />
                     100% confidential. We never sell your information.
                   </p>
                 </div>
+              ) : (
+                <div className="flex flex-col gap-5">
+                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-primary/30 bg-primary/5 p-5 text-center">
+                    <CheckCircle2 className="size-8 text-primary" aria-hidden="true" />
+                    <p className="font-medium text-foreground">
+                      Here&apos;s your complete action plan, {contact.name.split(" ")[0] || "friend"}.
+                    </p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {site.specialist} will also personally review your answers and reach out with
+                      clear next steps — no pressure, no obligation.
+                    </p>
+                  </div>
+
+                  {rest.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                      <h3 className="font-semibold text-card-foreground">
+                        Your other recommended options
+                      </h3>
+                      {rest.map((opt, i) => (
+                        <div
+                          key={opt.slug}
+                          className="flex flex-col gap-3 rounded-2xl border border-border bg-background p-5"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <span className="flex items-center gap-2">
+                              <span className="flex size-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                                {i + 2}
+                              </span>
+                              <span className="font-semibold text-card-foreground">{opt.title}</span>
+                            </span>
+                            <Badge variant="secondary">{categoryMeta[opt.category].label}</Badge>
+                          </div>
+                          <p className="text-sm leading-relaxed text-muted-foreground">{opt.summary}</p>
+                          <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                              Why this may fit
+                            </span>
+                            <p className="text-sm leading-relaxed text-muted-foreground">
+                              {fitReason(opt, finderAnswers)}
+                            </p>
+                          </div>
+                          <p className="text-sm leading-relaxed text-muted-foreground">
+                            <span className="font-medium text-foreground">Next step: </span>
+                            {opt.nextStep}
+                          </p>
+                          <Link
+                            href={`/options#${opt.slug}`}
+                            className="text-sm font-medium text-primary hover:underline"
+                          >
+                            Learn more about {opt.title}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-3 rounded-2xl border border-border bg-secondary/40 p-5">
+                    <h3 className="flex items-center gap-2 font-semibold text-card-foreground">
+                      <MapPin className="size-4 text-primary" aria-hidden="true" />
+                      Texas-specific guidance &amp; deadlines
+                    </h3>
+                    <ul className="flex flex-col gap-3">
+                      {texasGuidance(finderAnswers).map((tip, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm leading-relaxed text-muted-foreground">
+                          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                          <span>{tip}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex flex-col gap-3 rounded-2xl bg-secondary/60 p-5 text-center">
+                    <p className="text-sm font-medium text-foreground">
+                      Want {site.specialist} to walk through this with you?
+                    </p>
+                    <Button render={<a href={site.phoneHref} />} nativeButton={false} variant="outline" size="lg">
+                      <Phone className="size-4" aria-hidden="true" />
+                      Call {site.phone}
+                    </Button>
+                    <Link href="/guides" className="text-sm font-medium text-primary hover:underline">
+                      Or keep reading our free guides
+                    </Link>
+                  </div>
+                </div>
               )}
 
               <p className="text-pretty text-center text-xs leading-relaxed text-muted-foreground">
                 {site.name} is run by a Texas real estate investor. Buying your home is one option we
-                offer, but never the only one — and often not the right one. We&apos;ll always tell
-                you honestly.
+                offer, but never the only one — and often not the right one. We&apos;ll always tell you
+                honestly.
               </p>
 
               <div className="flex justify-center">
