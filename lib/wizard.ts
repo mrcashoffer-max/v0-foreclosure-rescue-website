@@ -169,6 +169,9 @@ export type Analysis = {
   confidence: Confidence
   /** 0–100, for a subtle match meter. */
   confidenceScore: number
+  /** Confidence for the second-best option ("another option worth considering"). */
+  secondaryConfidence: Confidence
+  secondaryScore: number
 }
 
 /**
@@ -414,7 +417,87 @@ export function analyze(a: FinderAnswers): Analysis {
     confidenceScore = 75
   }
 
-  return { ranked: list, confidence, confidenceScore }
+  // Secondary option confidence — always presented as a genuine alternative,
+  // but kept a step below the best fit.
+  const secondaryScore = ranked[1]
+    ? Math.min(
+        confidenceScore - 8,
+        Math.max(52, Math.round((secondScore / (topScore || 1)) * confidenceScore)),
+      )
+    : 55
+  const secondaryConfidence: Confidence =
+    secondaryScore >= 78 ? "High" : secondaryScore >= 64 ? "Moderate" : "Preliminary"
+
+  return { ranked: list, confidence, confidenceScore, secondaryConfidence, secondaryScore }
+}
+
+/**
+ * A short, natural reflection of the homeowner's situation — the way an
+ * experienced advisor would summarize it back to them before giving advice.
+ * Intentionally concise (three sentences) and never a raw echo of answers.
+ */
+export function situationSummary(a: FinderAnswers): string[] {
+  const { stage, goal, property, equity, mortgage, challenges } = a
+  const lines: string[] = []
+
+  // 1) Where they stand / timeline
+  if (stage === "sale") {
+    lines.push(
+      "A foreclosure sale has already been scheduled, so timing is critical — but the right move now can still change how this ends.",
+    )
+  } else if (stage === "notice") {
+    lines.push(
+      "You've received a formal notice, which means the clock has started — yet this stage still leaves several real paths open to you.",
+    )
+  } else if (stage === "behind" || mortgage === "few" || mortgage === "many") {
+    lines.push(
+      "You've fallen behind on payments, so time is a factor — but you have more options right now than it probably feels like.",
+    )
+  } else if (stage === "current") {
+    lines.push(
+      "You're still current but you can see trouble ahead — reaching out this early gives you the most room to work with.",
+    )
+  } else {
+    lines.push(
+      "You're not entirely certain where things stand right now, and that's completely okay — this is exactly what we're here to help sort out.",
+    )
+  }
+
+  // 2) What matters most
+  const goalLine: Record<string, string> = {
+    keep: "What matters most to you is finding a way to keep your home.",
+    sell: "Your priority is selling before foreclosure and moving forward on your own terms.",
+    credit: "Above all, you want to protect your credit from a completed foreclosure.",
+    equity: "Your main focus is protecting the equity you've built in the home.",
+    learn: "Right now you mostly want to understand your options clearly before deciding anything.",
+    unsure: "You're still weighing what you want most, so we've kept every reasonable path on the table.",
+  }
+  if (goal && goalLine[goal]) lines.push(goalLine[goal])
+
+  // 3) Property / equity synthesis (one line)
+  if (property === "inherited" || challenges.includes("probate")) {
+    lines.push(
+      "Because this home came to you through an inheritance, clearing title comes first — and that usually means you have more time than you'd expect.",
+    )
+  } else if (property === "rental") {
+    lines.push(
+      "Since this is an investment property, we've focused only on the paths that genuinely apply to rentals.",
+    )
+  } else if (equity === "alot" || equity === "some") {
+    lines.push(
+      "You appear to have meaningful equity in the home, which works in your favor and widens the choices available to you.",
+    )
+  } else if (equity === "little" || equity === "none") {
+    lines.push(
+      "There may be little equity to work with, so we've leaned toward options built for exactly that situation.",
+    )
+  } else if (challenges.includes("taxes")) {
+    lines.push(
+      "Property taxes are part of the picture here, which shapes which solutions will actually resolve things.",
+    )
+  }
+
+  return lines.slice(0, 3)
 }
 
 /**
