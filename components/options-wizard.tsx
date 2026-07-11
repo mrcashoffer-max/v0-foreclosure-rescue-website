@@ -14,6 +14,7 @@ import {
   analyze,
   fitReason,
   texasGuidance,
+  situationSummary,
   isTimeSensitive,
   isMostlyUnsure,
 } from "@/lib/wizard"
@@ -25,6 +26,7 @@ import {
   ArrowRight,
   CalendarClock,
   CheckCircle2,
+  ClipboardList,
   Clock,
   Gauge,
   ListChecks,
@@ -63,7 +65,8 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
   const analysis = useMemo(() => analyze(finderAnswers), [finderAnswers])
 
   const best = analysis.ranked[0]
-  const rest = analysis.ranked.slice(1)
+  const second = analysis.ranked[1]
+  const rest = analysis.ranked.slice(2)
 
   const current = finderQuestions[step]
   const isMulti = !!current?.multi
@@ -143,7 +146,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
       })
       if (res.ok) {
         setSubmitted(true)
-        toast.success("Your complete action plan is unlocked below.")
+        toast.success("Your personalized action plan is ready below.")
       } else {
         setError(res.message)
         toast.error(res.message)
@@ -314,10 +317,21 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 <h2 className="text-balance text-xl font-semibold text-card-foreground sm:text-2xl">
                   We&apos;ve analyzed your situation
                 </h2>
-                <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
-                  Based on your answers, here&apos;s the option that appears to fit you best — and
-                  why. This is a starting point, not advice.
-                </p>
+              </div>
+
+              {/* Situation summary — reflect their story back before advising */}
+              <div className="flex flex-col gap-3 rounded-2xl border border-border bg-secondary/40 p-5">
+                <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <ClipboardList className="size-4 text-primary" aria-hidden="true" />
+                  Based on what you shared
+                </span>
+                <div className="flex flex-col gap-2">
+                  {situationSummary(finderAnswers).map((line, i) => (
+                    <p key={i} className="text-pretty text-sm leading-relaxed text-muted-foreground">
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
 
               {isTimeSensitive(finderAnswers) && (
@@ -355,7 +369,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                      Best initial recommendation
+                      Best recommendation
                     </span>
                     <Badge variant="secondary">{categoryMeta[best.category].label}</Badge>
                   </div>
@@ -414,20 +428,102 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                 </Link>
               </div>
 
-              {/* Unlock the complete action plan */}
+              {/* Another option worth considering */}
+              {second && (
+                <div className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                      Another option worth considering
+                    </span>
+                    <Badge variant="secondary">{categoryMeta[second.category].label}</Badge>
+                  </div>
+                  <h3 className="text-lg font-semibold text-card-foreground">{second.title}</h3>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                      <Gauge className="size-3.5 text-primary" aria-hidden="true" />
+                      {analysis.secondaryConfidence} match for your situation
+                    </span>
+                    <Progress value={analysis.secondaryScore} className="h-1.5" />
+                  </div>
+
+                  <div className="flex flex-col gap-1 rounded-xl bg-secondary/50 p-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                      Why it may fit
+                    </span>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {fitReason(second, finderAnswers)}
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="flex flex-col gap-1 rounded-xl border border-border p-3">
+                      <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                        <ThumbsUp className="size-3.5 text-primary" aria-hidden="true" />
+                        Key advantage
+                      </span>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {second.advantages[0]}
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-1 rounded-xl border border-border p-3">
+                      <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                        <TriangleAlert className="size-3.5 text-primary" aria-hidden="true" />
+                        Keep in mind
+                      </span>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {second.considerations[0]}
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/options#${second.slug}`}
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Learn more about {second.title}
+                  </Link>
+                </div>
+              )}
+
+              {/* Continue the analysis — additional personalized guidance */}
               {!submitted ? (
                 <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-2">
                     <h3 className="flex items-center gap-2 font-semibold text-card-foreground">
                       <ListChecks className="size-4 text-primary" aria-hidden="true" />
-                      Your analysis found {rest.length > 0 ? `${rest.length} more option${rest.length > 1 ? "s" : ""}` : "more guidance"} and a complete action plan
+                      Your personalized analysis doesn&apos;t stop here
                     </h3>
                     <p className="text-sm leading-relaxed text-muted-foreground">
-                      Tell us where to send it and we&apos;ll put together your full personalized plan:
-                      your other recommended options, Texas-specific guidance, the deadlines that
-                      matter, and clear next steps. {site.specialist} will also personally review your
-                      situation to see if there are opportunities the automated analysis may have
-                      missed.
+                      Based on your answers, we identified{" "}
+                      {rest.length > 0
+                        ? `${rest.length} more option${rest.length > 1 ? "s" : ""}`
+                        : "additional guidance"}{" "}
+                      that may also fit your situation, along with Texas-specific details that could
+                      affect which path is best. If you&apos;d like, we&apos;ll prepare your complete
+                      personalized action plan, including:
+                    </p>
+                    <ul className="flex flex-col gap-1.5 pt-1">
+                      {[
+                        "Your remaining recommended options",
+                        "Texas-specific guidance, deadlines, and considerations",
+                        "Suggested next steps for your situation",
+                        `A personal review by ${site.specialist}, a Texas foreclosure specialist, to catch opportunities the automated analysis may have missed`,
+                      ].map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-sm leading-relaxed text-muted-foreground"
+                        >
+                          <CheckCircle2
+                            className="mt-0.5 size-4 shrink-0 text-primary"
+                            aria-hidden="true"
+                          />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
+                      Add your details below and we&apos;ll prepare your complete personalized action
+                      plan.
                     </p>
                   </div>
 
@@ -540,7 +636,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                   {error && <p className="text-sm text-destructive">{error}</p>}
 
                   <Button onClick={unlockPlan} disabled={isPending} size="lg">
-                    {isPending ? "Preparing your plan..." : "Show my complete action plan"}
+                    {isPending ? "Preparing your plan..." : "Prepare my personalized action plan"}
                   </Button>
                   <p className="flex items-center justify-center gap-2 text-center text-xs text-muted-foreground">
                     <ShieldCheck className="size-3.5 shrink-0" aria-hidden="true" />
@@ -573,7 +669,7 @@ export function OptionsWizard({ source = "options-wizard" }: { source?: string }
                           <div className="flex items-center justify-between gap-3">
                             <span className="flex items-center gap-2">
                               <span className="flex size-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                                {i + 2}
+                                {i + 3}
                               </span>
                               <span className="font-semibold text-card-foreground">{opt.title}</span>
                             </span>
