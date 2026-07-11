@@ -1,6 +1,7 @@
 "use server"
 
 import { getPool } from "@/lib/db"
+import { site } from "@/lib/site"
 
 export type LeadState = {
   ok: boolean
@@ -58,7 +59,7 @@ export async function submitLead(
     console.log("[v0] submitLead error:", error instanceof Error ? error.message : error)
     return {
       ok: false,
-      message: "Something went wrong saving your request. Please call us directly at 469-509-3031.",
+      message: `Something went wrong saving your request. Please call us directly at ${site.phone}.`,
     }
   }
 }
@@ -127,7 +128,7 @@ export async function submitWizardLead(input: {
     console.log("[v0] submitWizardLead error:", error instanceof Error ? error.message : error)
     return {
       ok: false,
-      message: "Something went wrong. Please call us directly at 469-509-3031.",
+      message: `Something went wrong. Please call us directly at ${site.phone}.`,
     }
   }
 }

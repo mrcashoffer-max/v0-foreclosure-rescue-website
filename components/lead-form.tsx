@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { CheckCircle2, ShieldCheck } from "lucide-react"
+import { site } from "@/lib/site"
 
 const initialState: LeadState = { ok: false, message: "" }
 
@@ -44,8 +45,8 @@ export function LeadForm({ source = "website" }: { source?: string }) {
         <p className="text-pretty text-muted-foreground leading-relaxed">{state.message}</p>
         <p className="text-sm text-muted-foreground">
           Prefer to talk now? Call{" "}
-          <a href="tel:+14695093031" className="font-medium text-primary hover:underline">
-            469-509-3031
+          <a href={site.phoneHref} className="font-medium text-primary hover:underline">
+            {site.phone}
           </a>
         </p>
       </div>

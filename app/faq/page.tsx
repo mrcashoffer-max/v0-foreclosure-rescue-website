@@ -31,7 +31,7 @@ export default function FaqPage() {
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full">
           {faqs.map((faq, i) => (
             <AccordionItem key={i} value={`item-${i}`}>
               <AccordionTrigger className="text-left text-base font-medium">
