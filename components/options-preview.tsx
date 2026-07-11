@@ -53,7 +53,7 @@ export function OptionsPreview() {
                     <li key={o.slug}>
                       <Link
                         href={`/options#${o.slug}`}
-                        className="flex items-center justify-between gap-2 text-sm text-card-foreground transition-colors hover:text-primary"
+                        className="group flex items-center justify-between gap-2 text-sm text-card-foreground transition-colors hover:text-primary"
                       >
                         {o.title}
                         <ArrowRight className="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />

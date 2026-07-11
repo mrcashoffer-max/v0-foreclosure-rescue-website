@@ -1,4 +1,5 @@
 import { LeadForm } from "@/components/lead-form"
+import { site } from "@/lib/site"
 
 export function FinalCta() {
   return (
@@ -29,8 +30,8 @@ export function FinalCta() {
           </ul>
           <p className="pt-2 text-primary-foreground/80">
             Prefer to call?{" "}
-            <a href="tel:+14695093031" className="font-semibold text-primary-foreground underline">
-              469-509-3031
+            <a href={site.phoneHref} className="font-semibold text-primary-foreground underline">
+              {site.phone}
             </a>
           </p>
         </div>

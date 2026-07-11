@@ -40,6 +40,30 @@ export const counties: County[] = [
       "Denton County sales occur on the first Tuesday of the month at the county courthouse. Homeowners in Denton, Lewisville, Flower Mound, and Little Elm have time-sensitive options to protect their home and equity.",
   },
   {
+    slug: "rockwall",
+    name: "Rockwall County",
+    courthouseCity: "Rockwall",
+    region: "Dallas–Fort Worth",
+    blurb:
+      "Rockwall County foreclosure sales are held on the first Tuesday of each month at the county courthouse in Rockwall. If you're behind on your mortgage in Rockwall, Rowlett, Heath, Fate, or Royse City, acting early gives you the widest range of options.",
+  },
+  {
+    slug: "kaufman",
+    name: "Kaufman County",
+    courthouseCity: "Kaufman",
+    region: "Dallas–Fort Worth",
+    blurb:
+      "Kaufman County auctions take place on the first Tuesday of the month at the county courthouse in Kaufman. Homeowners in Forney, Terrell, Crandall, and Kaufman still have time to stop a sale or sell before the auction date.",
+  },
+  {
+    slug: "ellis",
+    name: "Ellis County",
+    courthouseCity: "Waxahachie",
+    region: "Dallas–Fort Worth",
+    blurb:
+      "Ellis County foreclosure sales are held at the county courthouse in Waxahachie on the first Tuesday of each month. If you own a home in Waxahachie, Midlothian, Ennis, or Red Oak, a specialist can help you understand your options before time runs out.",
+  },
+  {
     slug: "harris",
     name: "Harris County",
     courthouseCity: "Houston",
