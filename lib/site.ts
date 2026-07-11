@@ -1,7 +1,7 @@
 export const site = {
   name: "Home Rescue Texas",
-  phone: "469-509-3031",
-  phoneHref: "tel:+14695093031",
+  phone: "469-908-1986",
+  phoneHref: "tel:+14699081986",
   email: "chris@homerescuetx.com",
   specialist: "Chris Scott",
   serviceArea: "Dallas–Fort Worth & across Texas",
